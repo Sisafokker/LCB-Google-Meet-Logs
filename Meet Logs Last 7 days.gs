@@ -1,5 +1,6 @@
-// Container Bound: Google Spreadsheet
-// Check Meet Logs and prints to Spreadsheet (last 7 days, if useremail starts with 'st.')
+// * Container Bound: Google Spreadsheet. Checks Meet Logs (needs user with appropriate admin role) 
+// * @param None
+// * @return {Array} Prints to Spreadsheet (last 7 days of logs, if useremail starts with 'st.')
 
 var list =[]
 
@@ -41,7 +42,7 @@ try{
         var correo = datos.actor.email;
 
         if(parametros);{
-              var parameterValues = getParameterValues2(parametros);
+              var parameterValues = getParameterValues(parametros);
               var codigoMeet = parameterValues['meeting_code'];                      
         //    console.log(correo);
             if(correo && !correo.includes("st.")){ // Similar a indexOf . Si correo NO contiene "st."
@@ -62,8 +63,8 @@ try{
 
     } while (pageToken && pagina < 3);
       if(list.length > 0) {
-        //SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Meet Diarios Test").getRange(2,5,list.length ,list[0].length).setValues(list);
-        var sheetData = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Meet Logs Diarios")
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var sheetData = ss.getSheetByName("Meet Logs Diarios") || ss.insertSheet("Meet Logs Diarios");
         sheetData.getRange(2,6,list.length,list[1].length).setValues(list);
         }
     
@@ -82,7 +83,10 @@ function cambiarHorario(timeStamp){
   return timeFormateado
 }
 
-function getParameterValues2(parameters) {
+// * Gets a map of parameter names to values from an array of parameter objects.
+// * @param {Array} parameters An array of parameter objects.
+// * @return {Object} A map from parameter names to their values.
+function getParameterValues(parameters) {
 try{ 
     return parameters.reduce(function(result, parameter) {
     var name = parameter.name;
@@ -106,3 +110,4 @@ try{
   console.log("Error logged: "+e)
           }
 }
+
